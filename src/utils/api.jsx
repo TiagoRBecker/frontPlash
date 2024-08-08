@@ -7,9 +7,9 @@ import { useRouter } from "next/navigation";
 
 import { statusCode } from "./statusCode";
 
-export const baseUrl = "http://localhost:443/public";
-export const auth = "http://localhost:443/auth";
-export const userUrl = "http://localhost:443/user";
+export const baseUrl = "http://77.37.69.19:443/public";
+export const auth = "http://77.37.69.19:443/auth";
+export const userUrl = "http://77.37.69.19:443/user";
 //"http://191.101.70.103:5000"
 ////"http://localhost:443"
 ////"https://localhost:5000"
