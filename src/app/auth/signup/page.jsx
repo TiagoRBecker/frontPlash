@@ -44,7 +44,7 @@ const signup = () => {
     ];
 
     // Pré-carregar as imagens
-    const preloadedImages = imageUrlsList.map((url) => {
+    const preloadedImages = imageUrlsList?.map((url) => {
       const img = new Image();
       img.src = url;
       return img;
@@ -104,7 +104,7 @@ const signup = () => {
   const onSubmit = handleSubmit(async (data) => {
     setError("")
     try {
-      const createAccount = await fetch(`${baseUrl}/signUp`, {
+      const createAccount = await fetch(`${process.env.NEXT_PUBLIC_AUTH_URL}/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -112,7 +112,8 @@ const signup = () => {
         body: JSON.stringify(data),
       });
      
-      
+      const response = await createAccount.json()
+      console.log(response)
       if (createAccount.status === 200) {
         setCurrentIndex(currentIndex + 2);
         return;
