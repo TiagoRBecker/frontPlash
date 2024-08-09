@@ -7,3 +7,9 @@ export const getCookies = async () => {
    
   return token;
 };
+
+export const deleteCookie = async () => {
+  const token = cookies().delete("jwt")
+   
+  return token;
+};

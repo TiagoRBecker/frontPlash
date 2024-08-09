@@ -321,7 +321,7 @@ class Api {
         
       };
       const response = await statusCode(url,options)
-      console.log(response)
+     
       return response
       
     } catch (error) {

@@ -151,7 +151,7 @@ const events = async () => {
                   href={`/events/${event.id}`}
                   className="w-full bg-[#d9d9d9] flex items-center justify-center py-2 h-14"
                 >
-                  <TimerComponent eventTimestamp={event.date_event_initial} />
+                  <TimerComponent startDate={new Date (Number(event.date_event_initial))} />
                 </Link>
               )}
             </div>

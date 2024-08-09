@@ -10,7 +10,7 @@ const MyCountdown = ({ endDate,startDate, currentDate }) => {
     
     else{
       return (
-        <div className="w-full flex flex-col items-center justify-center gap-2 bg-gray-300">
+        <div className="w-full flex flex-col items-center justify-center gap-2 bg-gray-300 text-black">
           <div className="flex gap-2">
             <div className="flex flex-col items-center justify-center">
               <div className="flex items-center">

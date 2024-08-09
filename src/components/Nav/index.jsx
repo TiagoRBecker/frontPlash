@@ -1,19 +1,11 @@
 "use client";
 import Link from "next/link";
-import { useCallback, useContext, useEffect, useState } from "react";
+import {  useContext, useEffect, useState } from "react";
 import { signOut, useSession } from "next-auth/react";
 import { ApiHook, baseUrl } from "../../utils/api.jsx";
 import { CartContext } from "../../Context";
-import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
-} from "@chakra-ui/react";
-import Error from "@/app/error.js";
 import { useRouter } from "next/navigation.js";
+import { deleteCookie } from "@/utils/cookies.js";
 
 const Header = () => {
   const { data: session, status } = useSession();
@@ -75,7 +67,12 @@ const Header = () => {
   const handleMenuMobile = () => {
     setShowMenuMobile(!showMenuMobile);
   };
-
+  const handleSignOut = async () => {
+    await signOut({ redirect: false }); // Não redireciona automaticamente
+    await deleteCookie()
+    router.push('/'); // Redireciona manualmente para a página de login
+    return
+  };
   const getCategories = async () => {
     setLoading(true)
     try {
@@ -583,8 +580,8 @@ const Header = () => {
                 </div>
               </Link>
               <div
-                className=" flex gap-2 items-center"
-                onClick={() => signOut({ callbackUrl: "/" })}
+                className=" flex gap-2 items-center cursor-pointer"
+                onClick={handleSignOut}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

@@ -6,8 +6,9 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Suspense, useState } from "react";
-
+import { useSearchParams } from "next/navigation";
 const Signin = () => {
+  const params = useSearchParams();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [erroText, setErrorText] = useState("");
@@ -16,6 +17,7 @@ const Signin = () => {
   const [authenticated, setAuthenticated] = useState(false);
   const router = useRouter();
   const handleSubmit = async (e) => {
+    setLoading(true);
     setError(false);
     setAuthenticated(false);
 
@@ -24,24 +26,25 @@ const Signin = () => {
       alert("Campos nao pode estar vazio");
       return;
     }
+
     try {
-      setLoading(true);
+      const callbackUrl = params.get("callbackUrl");
       const login = await signIn("credentials", {
         email: email,
         password: password,
         redirect: false,
+        callbackUrl: callbackUrl || "/",
       });
 
-      if (login.status === 200) {
-        setAuthenticated(true);
+      if (!login.ok) {
+        setError(true);
+        setErrorText(login.error);
         setLoading(false);
-        router.push("/");
         return;
       }
 
-      setError(true);
-      setErrorText(login.error);
-      setLoading(false);
+      setAuthenticated(true);
+      await router.push(login.url);
       return;
     } catch (error) {
       console.log("Aqui", error);
