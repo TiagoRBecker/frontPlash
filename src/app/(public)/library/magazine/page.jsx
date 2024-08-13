@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { ApiHook } from "../../../../utils/api.jsx";
 import { useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Loading from "../../../loading";
 import GridLayout from "@/components/Grid";
@@ -11,6 +11,7 @@ import Filter from "@/components/Filter";
 const Library = () => {
   const path = usePathname();
   const router = useRouter();
+   const {data:session} = useSession()
   const [name, setName] = useState("");
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -23,7 +24,7 @@ const Library = () => {
     
 
     // Limpeza do efeito
-  }, []);
+  }, [session]);
 
   const [orderBy, setOrderBy] = useState("");
   const getAllBooks = async () => {
@@ -41,7 +42,9 @@ const Library = () => {
       setLoading(false);
     }
   };
-
+  if(!session){
+    return redirect('/auth/signin')
+  }
   if (loading) {
     return (
       <section className="w-full h-screen">

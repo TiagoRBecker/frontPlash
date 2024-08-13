@@ -1,14 +1,15 @@
 "use client"
 import Link from "next/link";
 import ArticleNav from "../../../../components/NavArticle";
-import { readingTime } from "reading-time-estimator";
-import { baseUrl } from "../../../../utils/api";
+import { useRouter} from  'next/navigation'
+import { ApiHook } from "../../../../utils/api";
 import { useEffect, useState,useContext } from "react";
 import Loading from "../../../loading";
 import { CartContext } from "@/Context";
+import { reading } from "@/utils/formateReading";
 
 const Free = async () => {
- 
+ const router = useRouter()
 
   useEffect(()=>{getArticleFree()},[])
   const [data, setData] = useState([])
@@ -22,16 +23,23 @@ const Free = async () => {
   const verifyIdSave = data.map((id) =>
     articleIdFavorite.includes(id.id)
   );
-  const reading = (text) => {
-    const read = readingTime(text, 20, "pt-br");
-    return read.minutes;
-  };
+ 
   const getArticleFree = async () => {
-    const getArticle = await fetch(`${baseUrl}/articles-free`, { method: "GET", cache:"no-cache" });
-    const response = await getArticle.json();
-    setData(response)
-    setLoading(false)
-    return response;
+    try {
+      const response = await ApiHook.articlesFree()
+      setData(response)
+      return
+    } catch (error) {
+      console.log(error)
+      router.push('/error')
+    }
+    finally{
+      setLoading(false)
+    }
+  
+ 
+   
+   
   };
    
   if(loading){

@@ -1,11 +1,11 @@
 "use client"
 import ArticleNav from "../../../../components/NavArticle";
-import { readingTime } from "reading-time-estimator";
 import { baseUrl } from "../../../../utils/api";
 import Link from "next/link";
 import { Suspense, useContext, useEffect, useState } from "react";
 import Loading from "../../../loading";
 import { CartContext } from "@/Context";
+import { reading } from "@/utils/formateReading";
 
 
 const Recommended = async  () => {
@@ -31,10 +31,7 @@ const Recommended = async  () => {
    articleIdFavorite.includes(id.id)
  );
 
-  const reading = (text) => {
-    const read = readingTime(text, 20, "pt-br");
-    return read.minutes;
-  };
+ 
   if(loading){
     return(
       <div className="w-full h-screen flex items-center justify-center">

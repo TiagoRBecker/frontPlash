@@ -11,7 +11,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['plashmagazine.s3.sa-east-1.amazonaws.com'],
+    domains: ['storage.googleapis.com'],
   },
   webpack: (config, { isServer }) => {
     const debug = process.env.NODE_ENV !== "production";

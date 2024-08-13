@@ -1,4 +1,3 @@
-
 import { getCookies } from "./cookies";
 import ModalAlert from "@/components/Modal";
 import { signOut } from "next-auth/react";
@@ -18,56 +17,49 @@ export const baseURLPOST = "https://localhost:5000";
 
 class Api {
   //GET//
-  
+
   async user() {
     try {
       const token = await getCookies();
-      const url = `${process.env.NEXT_PUBLIC_USER_URL}user/perfil`
-      const options ={
+      const url = `${process.env.NEXT_PUBLIC_USER_URL}user/perfil`;
+      const options = {
         method: "GET",
         cache: "no-cache",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token?.value}`,
         },
-      }
-      
-     
-      const response = await statusCode(url,options);
-       console.log(response)
+      };
+
+      const response = await statusCode(url, options);
+      console.log(response);
       return response;
     } catch (error) {
       console.log(error);
     }
   }
   async userLibrary() {
-  
-
     try {
       const token = await getCookies();
-      const url = `${process.env.NEXT_PUBLIC_USER_URL}user/library`
-      const options ={
+      const url = `${process.env.NEXT_PUBLIC_USER_URL}user/library`;
+      const options = {
         method: "GET",
         cache: "no-cache",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token?.value}`,
         },
-      }
-     
+      };
 
-      
-      const response = await statusCode(url,options);
-     
+      const response = await statusCode(url, options);
+
       return response;
     } catch (error) {
       console.log(error);
-      throw new Error("Erro interno do sistema")
+      throw new Error("Erro interno do sistema");
     }
   }
-  async userLibraryBook() {
-
-  }
+  async userLibraryBook() {}
   async userDvls() {
     try {
       const token = await getCookies();
@@ -151,10 +143,10 @@ class Api {
   }
   //##################//
 
-  // POST 
- 
+  // POST
+
   async payments() {}
-  
+
   async userEditPass(data) {
     try {
       const token = await getCookies();
@@ -173,14 +165,11 @@ class Api {
       if (!user.ok) {
         const errorResponse = await user.json();
         const errorMessage = errorResponse.error || "Erro ao alterar a senha.";
-        Swal.fire(
-          {
-            icon: "error",
-            title: errorMessage,
-            confirmButtonColor:"blue",
-           
-          }
-        );
+        Swal.fire({
+          icon: "error",
+          title: errorMessage,
+          confirmButtonColor: "blue",
+        });
         return;
       }
       const response = await user.json();
@@ -227,14 +216,11 @@ class Api {
           const errorResponse = await user.json();
           const errorMessage =
             errorResponse.error || "Erro ao alterar a senha.";
-          await  Swal.fire(
-              {
-                icon: "error",
-                title: errorMessage,
-                confirmButtonColor:"blue",
-               
-              }
-            );
+          await Swal.fire({
+            icon: "error",
+            title: errorMessage,
+            confirmButtonColor: "blue",
+          });
           return;
         }
         const response = await user.json();
@@ -243,7 +229,7 @@ class Api {
           icon: "success",
           title: "Dados  alterados com sucesso!",
           showConfirmButton: true,
-          confirmButtonColor:"green",
+          confirmButtonColor: "green",
           timer: 3500,
         });
 
@@ -284,17 +270,14 @@ class Api {
           const errorResponse = await user.json();
           const errorMessage =
             errorResponse.error || "Erro ao alterar a senha.";
-            Swal.fire(
-              {
-                icon: "error",
-                title: errorMessage,
-                confirmButtonColor:"blue",
-               
-              }
-            );
+          Swal.fire({
+            icon: "error",
+            title: errorMessage,
+            confirmButtonColor: "blue",
+          });
           return;
         }
-       
+
         Swal.fire({
           position: "center",
           icon: "success",
@@ -305,9 +288,7 @@ class Api {
         await signOut({ callbackUrl: "/auth/signin" });
         return;
       } catch (error) {
-       
-        throw new Error("Erro interno no sistema")
-        
+        throw new Error("Erro interno no sistema");
       }
     }
   }
@@ -315,97 +296,137 @@ class Api {
   //#######################//
   async catgories() {
     try {
-       const url = `${process.env.NEXT_PUBLIC_URL}/categories`
-      const options =  {
+      const url = `${process.env.NEXT_PUBLIC_URL}/categories`;
+      const options = {
         method: "GET",
-        
       };
-      const response = await statusCode(url,options)
-     
-      return response
-      
+      const response = await statusCode(url, options);
+
+      return response;
     } catch (error) {
       console.error("Error fetching categories:", error);
-      throw new Error("Erro interno no servidor")
+      throw new Error("Erro interno no servidor");
     }
   }
   async categoriesID(id) {
     try {
-      const url = `${process.env.NEXT_PUBLIC_URL}/category/${id}`
-      const options =  {
+      const url = `${process.env.NEXT_PUBLIC_URL}/category/${id}`;
+      const options = {
         method: "GET",
-        cache:"no-cache"
-        
+        cache: "no-cache",
       };
-      const response = await statusCode(url,options)
-    
-      return response;
-    } catch (error) {
-      console.log(error)
-      throw new Error("Erro interno no servidor")
-  
-    }
-   
-  }
-  async events() {
-    try {
-      const url = `${process.env.NEXT_PUBLIC_URL}/events`
-      const options =  {
-        method: "GET",
-        cache:"no-cache"
-        
-      };
-     
-      const response = await statusCode(url,options);
+      const response = await statusCode(url, options);
 
-      
       return response;
     } catch (error) {
       console.log(error);
-      throw new Error("Erro interno no sistema!")
-    } 
-    
+      throw new Error("Erro interno no servidor");
+    }
+  }
+  async events() {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_URL}/events`;
+      const options = {
+        method: "GET",
+        cache: "no-cache",
+      };
+
+      const response = await statusCode(url, options);
+
+      return response;
+    } catch (error) {
+      console.log(error);
+      throw new Error("Erro interno no sistema!");
+    }
   }
   async eventsID(id) {
     try {
-      const url = `${process.env.NEXT_PUBLIC_URL}/event/${id}`
-      const options =  {
+      const url = `${process.env.NEXT_PUBLIC_URL}/event/${id}`;
+      const options = {
         method: "GET",
-        cache:"no-cache"
-        
+        cache: "no-cache",
       };
-    const response = await statusCode(url, options)  ;
-   
-    return response;
+      const response = await statusCode(url, options);
+
+      return response;
     } catch (error) {
-      console.log(error)
-      throw new Error ("Erro iterno no sistem!")
+      console.log(error);
+      throw new Error("Erro iterno no sistem!");
     }
-   
   }
-  
- 
-  
-  
+  async magazinesID(id) {
+    const url = `${process.env.NEXT_PUBLIC_URL}/magazine/${id}`;
+    const options = {
+      method: "GET",
+      cache: "no-cache",
+    };
+    try {
+      const response = await statusCode(url, options);
+      return response;
+    } catch (error) {
+      console.error("Error fetching magazine:", error);
+      throw new Error("Erro interno no sistema!");
+    }
+  }
+  async articlesMostviews() {
+    try {
+      const url = `${process.env.NEXT_PUBLIC_URL}/articles-most-views`;
+      const options = {
+        method: "GET",
+        cache: "no-cache",
+      };
+
+      const response = await statusCode(url, options);
+
+      return response;
+    } catch (error) {
+      throw new Error("Erro interno no sitema ");
+    }
+  }
+  async articlesFree() {
+    const url = `${process.env.NEXT_PUBLIC_URL}/articles-free`;
+    const options = {
+      method: "GET",
+      cache: "no-cache",
+    };
+    try {
+      
+      const response = await statusCode(url, options);
+      return response;
+    } catch (error) {
+      throw new Error("Erro interno no servidor!");
+    }
+  }
+  async articlesRecommended() {
+    const url = `${process.env.NEXT_PUBLIC_URL}/articles-recommended`;
+    const options = {
+      method: "GET",
+      cache: "no-cache",
+    };
+    try {
+      
+      const response = await statusCode(url, options);
+      return response;
+    } catch (error) {
+      throw new Error("Erro interno no servidor!");
+    }
+  }
+  async articlesTrend() {
+    const url = `${process.env.NEXT_PUBLIC_URL}/articles-trend`;
+    const options = {
+      method: "GET",
+      cache: "no-cache",
+    };
+    try {
+      
+      const response = await statusCode(url, options);
+      return response;
+    } catch (error) {
+      throw new Error("Erro interno no servidor!");
+    }
+  }
   
 
   async coversEvent() {}
-  async magazinesID() {}
- 
-  async articlesFree (){
-    try {
-      const articles = await fetch(`${process.env.NEXT_PUBLIC_URL}/articles-most-read`, {
-        method: "GET",
-        cache:"no-cache"
-      });
-      const response = await articles.json()
-      return
-    } catch (error) {
-      
-      throw new Error ("Erro interno no servidor!")
-    }
-    
- 
-  }
 }
 export const ApiHook = new Api();

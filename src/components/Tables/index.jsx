@@ -47,7 +47,7 @@ const TableOrderID = ({ data }) => {
                 </Td>
                 <Td className="capitalize">{item.model}</Td>
                
-                <Td className="capitalize">{item.model === "Digital"? <p>Biblioteca</p>: data.status }</Td>
+                <Td className="capitalize">{item.model === "Digital" ? <p>Biblioteca</p>: data.status }</Td>
               </Tr>
             </Tbody>
           ))}

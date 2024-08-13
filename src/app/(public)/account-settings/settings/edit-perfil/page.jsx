@@ -1,9 +1,8 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import Spinner from "../../../../../components/Spinner";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
-import { ApiHook, baseUrl, userUrl } from "../../../../../utils/api";
+import { ApiHook} from "../../../../../utils/api";
 import { useSession } from "next-auth/react";
 import Loading from "../../../../loading";
 const EditPerfil = () => {

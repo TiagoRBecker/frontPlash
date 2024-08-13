@@ -5,11 +5,16 @@ import { CartContext } from "../../../../Context/index";
 import { useContext } from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { baseUrl } from "../../../../utils/api";
+import { ApiHook, baseUrl } from "../../../../utils/api";
 import { readingTime } from "reading-time-estimator";
 import Loading from "../../../loading";
 import WayPoint from "../../../../components/WayPoint";
 import { useRouter } from "next/navigation";
+import Carrousel from "@/components/CarrouselComponent";
+import {
+  settingsArticlesCarroousel,
+  settingsMagazineCarrousel,
+} from "@/utils/settingsCarrousel";
 
 const BookId = ({ params }) => {
   const router = useRouter();
@@ -34,26 +39,17 @@ const BookId = ({ params }) => {
   };
   const getmagazineId = async () => {
     try {
-      const getMagazine = await fetch(`${baseUrl}/magazine/${params.id}`, {
-        method: "GET",
-        cache: "no-cache",
-      });
-      const response = await getMagazine.json();
+      const response = await ApiHook.magazinesID(params.id);
+      const categories = await ApiHook.categoriesID(response.Category.id);
 
-      const categories = await fetch(
-        `${baseUrl}/category/${response.Category.id}`,
-        {
-          method: "GET",
-          cache: "no-cache",
-        }
-      );
-      const category = await categories.json();
-      setCategoriesMagazine(category.magazine);
+      setCategoriesMagazine(categories.magazine);
       setData(response);
       setLoading(false);
       return;
     } catch (error) {
       console.error("Error fetching magazine:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -69,10 +65,22 @@ const BookId = ({ params }) => {
     return;
   };
 
-
-  const removeItem = (book) => {
-    removeToCart(book);
-    return;
+  
+  const statusArticle = (status) => {
+    console.log(status)
+    switch (status) {
+      case "recommended":
+        return (<p>Recomendado</p>)
+        break;
+      case "free":
+        return <p>Gratuito</p>;
+        break;
+      case "trend":
+        return <p>Tendencias</p>;
+        break;
+      default:
+        return <p></p>;
+    }
   };
 
   const total =
@@ -94,10 +102,10 @@ const BookId = ({ params }) => {
   );
 
   return (
-    <section className="max-w-[1240px] min-h-screen h-full mt-16 px-4 mx-auto">
+    <section className="container mx-auto min-h-screen h-full mt-16  ">
       <WayPoint
-        url={`/categorias/${data?.Category.id}`}
-        nameCategory={data?.Category.name}
+        url={`/categorias/${categoriesMagazine.id}`}
+        nameCategory={data.Category.name}
         name={data?.name}
       />
 
@@ -159,7 +167,7 @@ const BookId = ({ params }) => {
                       <div className="w-[40%] flex flex-col px-2  ">
                         <p
                           className=" w-full flex items-center justify-end cursor-pointer"
-                          onClick={() => removeItem(book)}
+                          onClick={() => removeToCart(book)}
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -201,9 +209,7 @@ const BookId = ({ params }) => {
             <div className="w-full flex items-center justify-between py-2 px-4">
               <h2 className="text-black font-bold">
                 Total{" "}
-                <span className=" font-semibold">
-                  (incluindo impostos)
-                </span>
+                <span className=" font-semibold">(incluindo impostos)</span>
               </h2>
               <p className="font-bold text-[#14b7a1]">
                 {Number(total).toLocaleString("pt-br", {
@@ -265,25 +271,23 @@ const BookId = ({ params }) => {
             {data?.description}
           </p>
 
-        
           <div className="w-full  flex  items-center  py-4 ">
             <button className="text-white font-bold w-32 py-1 bg-[#14b7a1]  text-base rounded-lg  uppercase">
               {data.model}
             </button>
           </div>
           <Link href={"help/profitDivision"}>
-          <p className="text-[9px]">
-            Saiba mais sobre os produto digital 3d Plash
-          </p>
+            <p className="text-[9px]">
+              Saiba mais sobre os produto digital 3d Plash
+            </p>
           </Link>
           <div className="w-full h-full grid-cols-1 gap-2 ">
             <div className="w-full mt-2  border-[1px] border-gray-400 py-1 px-1 ">
-             
               <button
                 onClick={() => handleToCart(data)}
                 className="w-full bg-[#14b7a1] font-   border-[1px]  px-10 py-4 text-white rounded-md uppercase text-sm transition duration-700 ease-in-out hover:bg-black hover:text-white"
               >
-                Comprar 
+                Comprar
               </button>
               <button
                 onClick={() => handleShowModal(data)}
@@ -292,17 +296,16 @@ const BookId = ({ params }) => {
                 Adicionar ao Carrinho
               </button>
               <div className="w-full flex items-center py-2 justify-between border-b-[1px] border-gray-400 px-4">
-            
                 <Link href={"help/profitDivision"}>
-                <div className="w-full flex items-center ">
-                  <p className="bg-slate-400 rounded-xl w-[80px] px-1 h-6 text-white pl-2 ">
-                    200%{" "}
-                  </p>
-                  <p className="bg-[#14b7a1] h-6 uppercase px-2 text-white rounded-xl -ml-6">
-                    DVL
-                  </p>
-                </div>
-                  </Link>
+                  <div className="w-full flex items-center ">
+                    <p className="bg-slate-400 rounded-xl w-[80px] px-1 h-6 text-white pl-2 ">
+                      200%{" "}
+                    </p>
+                    <p className="bg-[#14b7a1] h-6 uppercase px-2 text-white rounded-xl -ml-6">
+                      DVL
+                    </p>
+                  </div>
+                </Link>
                 <div className="">
                   <span className="font-bold text-xl">
                     {Number(data?.price).toLocaleString("pt-br", {
@@ -390,64 +393,71 @@ const BookId = ({ params }) => {
                       </svg>
                     </p>
                     <Link href={"help/profitDivision"}>
-                    <p>Vitalicio</p>
+                      <p>Vitalicio</p>
                     </Link>
                   </li>
                 </ul>
               </div>
             </div>
-            
           </div>
         </div>
       </div>
       {/*Magzines*/}
       {/*Articles*/}
-      <div>
-        {data?.article && data?.article.length > 0 && (
-          <div className="w-full px-4 py-10">
-            <div className="w-full flex items-center justify-between">
-              <h1 className="py-4 uppercase text-black font-bold">
-                Artigos nesta Edição
-              </h1>
-             
-            </div>
+      {
+        data.article && data.article.length > 0 &&
+      
+      <div className="w-full py-20 mx-auto h-full px-4">
+        <h1 className="py-4 uppercase text-black font-bold">
+          Artigos nesta Edição
+        </h1>
+        <Carrousel settings={settingsArticlesCarroousel} className="mb-10 ">
+          {data?.article.map((magazine, index) => (
+            <div
+              key={index}
+              className="w-full relative h-full flex items-center justify-center shadow transition ease-in-out delay-150 "
+            >
+              <Link
+                href={`/read-article-free/${magazine.id}`}
+                className="w-full h-full flex items-center justify-center flex-col p-1"
+              >
+                <div className="w-full flex items-center justify-between gap-2 ">
+                  <h1 className="w-full text-black font-semibold truncate">
+                    {magazine.name}
+                  </h1>
+                  <button className="w-[28%] h-6 rounded-md text-white bg-[#14b7a1]   text-[10px] ">
+                    {statusArticle(magazine.status)}
+                  </button>
+                </div>
+                <div className="w-full mt-2 flex items-center gap-2 h-[164px] ">
+                  <div className="w-[70%] h-full text-ellipsis overflow-hidden ">
+                    <p className="w-full h-[164px] text-justify text-ellipsis overflow-hidden">
+                      Lorem ipsum, dolor sit amet consectetur adipisicing elit.
+                      Quod ratione, dolore odio ea ipsam pariatur molestiae
+                      adipisci accusamus, neque, sequi hic numquam corrupti
+                      aliquid excepturi nam voluptate sed dolor sunt. Lorem
+                      ipsum, dolor sit amet consectetur adipisicing elit. Quod
+                      ratione, dolore odio ea ipsam pariatur molestiae adipisci
+                      accusamus, neque, sequi hic numquam corrupti aliquid
+                      excepturi nam voluptate sed dolor sunt. Lorem ipsum, dolor
+                      sit amet consectetur adipisicing elit. Quod ratione,
+                      dolore odio ea ipsam pariatur molestiae adipisci
+                      accusamus, neque, sequi hic numquam corrupti aliquid
+                      excepturi nam voluptate sed dolor sunt.
+                    </p>
+                  </div>
+                  <div className="w-[30%] h-full flex items-center justify-center ">
+                    <img
+                      src={magazine.cover}
+                      alt={magazine.name}
+                      className="w-full h-full object-cover object-center "
+                    />
+                  </div>
+                  <div></div>
+                </div>
 
-            <div className="w-full h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-3 py-5">
-              {data?.article?.map((article, index) => (
-                <div
-                  className="w-full h-full flex flex-col   shadow-md px-4 py-2 rounded-md "
-                  key={index}
-                >
-                  <Link
-                    href={`/read-article-free/${article.id}`}
-                  >
-                    <div className="w-full flex ">
-                      <div className="w-1/2 flex  flex-col">
-                      <span className="text-[#14b7a1] text-base">
-                        {data.company}
-                      </span>
-                      <h2 className="text-gray-400  text-base pt-1 ">
-                        Volume {article.volume}
-                      </h2>
-                     
-
-                      <h1 className="w-full font-bold text-sm truncate text-gray-400 pt-1 uppercase">
-                        {article.name}
-                      </h1>
-                      <p dangerouslySetInnerHTML={{__html:article.description}} className="w-full h-[100px]  overflow-hidden  "/>
-                      </div>
-                     <div className="w-1/2">
-                      <img
-                        src={article.cover}
-                        alt={article.name}
-                        className="w-full h-full    object-cover "
-                      />
-                      </div>
-                    </div>
-                    
-                  </Link>
-
-                  <div className="flex items-center justify-between py-2">
+                <div className="w-full h-full px-2 mt-2">
+                  <div className="w-full  flex items-center justify-between ">
                     <div className="flex items-center gap-1">
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -469,7 +479,7 @@ const BookId = ({ params }) => {
                         />
                       </svg>
 
-                      <p className="tex-base text-gray-400">{article.views}</p>
+                      <p className="tex-base text-gray-400">{magazine.views}</p>
                     </div>
                     <div className="flex items-center gap-1">
                       <svg
@@ -487,44 +497,29 @@ const BookId = ({ params }) => {
                         />
                       </svg>
                       <p className="tex-base text-gray-400">
-                        {reading(data.description)} minutos
+                        {reading(magazine.description)} min
                       </p>
                     </div>
                     <div className="flex items-center gap-1">
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        strokeWidth={1.5}
-                        stroke="currentColor"
-                        className="w-4 h-4 text-gray-400"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
-                        />
-                      </svg>
-                      <div className="flex items-center gap-1">
                         {verifyIdSave[index] ? (
                           <p className="text-base text-blue-300 ">Salvo</p>
                         ) : (
                           <p
-                            onClick={() => handleArticleFavorite(article)}
+                            onClick={() => handleArticleFavorite(magazine)}
                             className="text-base text-gray-400"
                           >
                             Guardar
                           </p>
                         )}
                       </div>
-                    </div>
                   </div>
                 </div>
-              ))}
+              </Link>
             </div>
-          </div>
-        )}
+          ))}
+        </Carrousel>
       </div>
+}
       {/*Articles*/}
       {filterMagazines && filterMagazines.length > 0 && (
         <div className="w-full py-20 mx-auto h-full px-4">
@@ -532,30 +527,35 @@ const BookId = ({ params }) => {
             Revistas desta categoria
           </h1>
 
-          <div className="w-full h-full grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 py-5">
-            {filterMagazines?.map((book, index) => (
-              <Link href={`/magazine/${book.id}`} key={index}>
-                <div className="w-full h-full flex flex-col gap-1 shadow-[rgba(0,_0,_0,_0.24)_0px_3px_8px]   rounded-md">
+          <Carrousel
+            settings={settingsMagazineCarrousel}
+            className="relative w-full"
+          >
+            {filterMagazines?.map((magazine, index) => (
+              <div
+                key={index}
+                className="max-w-[200px] relative h-full flex items-center justify-center shadow transition ease-in-out delay-150"
+              >
+                <Link
+                  href={`/magazine/${magazine.id}`}
+                  className="w-full h-full flex items-center justify-center flex-col"
+                >
+                  <button className="w-24 h-6 rounded-md text-white bg-[#14b7a1] absolute top-1 right-3 uppercase text-[12px] font-bold">
+                    {magazine.model}
+                  </button>
                   <img
-                    src={book.cover}
-                    alt={book.name}
-                    className="w-full h-full sm:h-[300px] "
+                    src={magazine.cover}
+                    alt={magazine.name}
+                    className="w-full h-[190px] md:h-[270px] object-fill "
                   />
-                  <h2 className="text-gray-400  px-1 ">
-                    Edição Volume {book.vol}
-                  </h2>
-
-                  <p className="w-full text-base truncate text-gray-600  px-1">
-                    {book.name}
-                  </p>
-
-                  <p className="w-full text-base truncate text-gray-600  px-1">
-                    {book.capa}
-                  </p>
-                </div>
-              </Link>
+                  <h1 className="w-full text-black font-semibold pl-1 truncate px-3">
+                    {magazine.name}
+                  </h1>
+                  <span className="w-full pl-1">Edição {magazine.volume}</span>
+                </Link>
+              </div>
             ))}
-          </div>
+          </Carrousel>
         </div>
       )}
 

@@ -33,9 +33,9 @@ const Signin = () => {
         email: email,
         password: password,
         redirect: false,
-        callbackUrl: callbackUrl || "/",
+       
       });
-
+       
       if (!login.ok) {
         setError(true);
         setErrorText(login.error);
@@ -44,7 +44,7 @@ const Signin = () => {
       }
 
       setAuthenticated(true);
-      await router.push(login.url);
+      await router.push('/');
       return;
     } catch (error) {
       console.log("Aqui", error);

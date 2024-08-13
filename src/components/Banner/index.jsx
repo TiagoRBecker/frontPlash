@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { baseUrl } from "../../utils/api";
-import CarrouselBanner from "../CarrouselComponent/CarrouselBanner";
+import CarrouselBanner from "./CarrouselBanner";
 import Loading from "../../app/loading";
 const getBanner = async ()=>{
   const request = await fetch(`${baseUrl}/banners`,{method:"GET", cache:"no-cache"})

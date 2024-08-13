@@ -1,18 +1,20 @@
-import { getServerSession } from "next-auth/next";
+
 import ReadBook from "../../../../components/Read";
-import { baseUrl, userUrl } from "../../../../utils/api";
-import { authOptions } from "../../../../utils/authOptions";
+
 import { Suspense } from "react";
 import Loading from "../../../loading";
-const getBookID = async (id,token) => {
-  const request = await fetch(`${userUrl}/user/perfil/library/${id}`, {
+import { getCookies } from "@/utils/cookies";
+const getBookID = async (id) => {
+   const token = await getCookies()
+  const request = await fetch(`${process.env.NEXT_PUBLIC_USER_URL}user/library/${id}`, {
     method: "GET",
     cache:"no-cache",
     headers: {
-      "Authorization": `Bearer ${token}`
+      "Authorization": `Bearer ${token.value}`
     },
   });
   const response = await request.json();
+   console.log(response)
   return response;
 };
 
@@ -20,10 +22,10 @@ const getBookID = async (id,token) => {
 
 
 const magazineID = async ({ params }) => {
-  const session = await getServerSession(authOptions)
   const id = params.id
-   const token = session.user.accessToken
-  const data = await getBookID(id,token)
+  
+  const data = await getBookID(id)
+   console.log(data)
  
   return (
     <Suspense fallback={<Loading/>}>

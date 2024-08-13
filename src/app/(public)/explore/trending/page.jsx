@@ -1,14 +1,15 @@
 "use client"
 import ArticleNav from "../../../../components/NavArticle";
-import { readingTime } from "reading-time-estimator";
-import { baseUrl } from "../../../../utils/api";
+import { ApiHook} from "../../../../utils/api";
 import Link from "next/link";
 import Loading from "../../../loading";
 import { useEffect,useState,useContext } from "react";
 import { CartContext } from "@/Context";
+import { useRouter } from "next/navigation"
+import { reading } from "@/utils/formateReading";
 
 const trend = async () => {
-
+ const router = useRouter()
  
   useEffect(()=>{getArticlesTrend()},[])
   const [data, setData] = useState([])
@@ -22,19 +23,19 @@ const trend = async () => {
   const verifyIdSave = data.map((id) =>
     articleIdFavorite.includes(id.id)
   );
-  const reading = (text) => {
-    const read = readingTime(text, 20, "pt-br");
-    return read.minutes;
-  };
   const getArticlesTrend = async () => {
-    const getArticle = await fetch(`${baseUrl}/articles-trend`, {
-      method: "GET",
-      cache: "no-cache",
-    });
-    const response = await getArticle.json();
-  setData(response)
-  setLoading(false)
-    return response;
+    try {
+      const response = await ApiHook.articlesFree()
+      setData(response)
+      return
+    } catch (error) {
+      console.log(error)
+      router.push('/')
+    }
+    finally{
+      setLoading(false)
+    }
+  
   };
  
  

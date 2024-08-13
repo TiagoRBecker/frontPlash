@@ -5,7 +5,7 @@ import {authOptions} from "../../../../../utils/authOptions"
 import { Suspense } from "react";
 import Loading from "../../../../loading";
 import { baseUrl } from "../../../../../utils/api";
-import ReadPDF from "../../../../../components/ReadPdf";
+import ReadPDF from "../../../../../components/ReadArticle";
 import WayPoint from "../../../../../components/WayPoint";
 const getArticleByUser = async (id,token) => {
     const request = await fetch(`${baseUrl}/user`, {

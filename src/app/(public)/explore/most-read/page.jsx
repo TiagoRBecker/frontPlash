@@ -1,13 +1,13 @@
 "use client"
 import ArticleNav from "../../../../components/NavArticle";
-import { readingTime } from "reading-time-estimator";
-import { ApiHook, baseUrl } from "../../../../utils/api";
+import { ApiHook } from "../../../../utils/api";
 import Link from "next/link";
 import {  useContext, useEffect, useState } from "react";
 import Loading from "../../../loading";
 import { CartContext } from "@/Context";
 import Error from "@/app/error";
 import { useRouter } from "next/navigation";
+import { reading } from "@/utils/formateReading";
 
 const MostRead = async () => {
    const router = useRouter()
@@ -24,19 +24,16 @@ const MostRead = async () => {
   const verifyIdSave = data?.map((id) =>
     articleIdFavorite.includes(id.id)
   );
-  const reading = (text) => {
-    const read = readingTime(text, 20, "pt-br");
-    return read.minutes;
-  };
+
   const getArticleMostRead = async () => {
     try {
     
-      const articles = await ApiHook.articlesFree()
+      const articles = await ApiHook.articlesMostviews()
       setData(articles)
    
       return
     } catch (error) {
-      
+      console.log(error)
       router.push("/error")
       return
       

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { readingTime } from "reading-time-estimator";
 import { baseUrl } from "../../utils/api";
 
-const getArticlesRecommended = async () => {
+const getArticlesMostViews = async () => {
     const getArticle = await fetch(`${baseUrl}/articles-most-views`, {
       method: "GET",
       cache:"no-cache"
@@ -12,7 +12,7 @@ const getArticlesRecommended = async () => {
     return response
   };
 const MostViews = async () => {
-  const data = await getArticlesRecommended();
+  const data = await getArticlesMostViews();
 
   const reading = (text) => {
     const read = readingTime(text, 20, "pt-br");

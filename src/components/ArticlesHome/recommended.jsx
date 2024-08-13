@@ -1,17 +1,18 @@
 import Link from "next/link";
 import { readingTime } from "reading-time-estimator";
-import { baseUrl } from "../../utils/api";
-import GridLayout from "../Grid";
+import { ApiHook} from "../../utils/api";
 import Carrousel from "../CarrouselComponent";
+import { settingsArticlesCarroousel } from "@/utils/settingsCarrousel";
+import Image from "next/image";
 
 const getArticlesRecommended = async () => {
-  const getArticle = await fetch(`${baseUrl}/articles-recommended`, {
-    method: "GET",
-    cache: "no-cache",
-  });
-  const response = await getArticle.json();
+  try {
+    const response = await ApiHook.articlesRecommended();
 
-  return response;
+    return response;
+  } catch (error) {
+    console.log(error);
+  }
 };
 const Recommended = async () => {
   const data = await getArticlesRecommended();
@@ -21,104 +22,15 @@ const Recommended = async () => {
     return read.minutes;
   };
 
-  function SampleNextArrow(props) {
-    const { onClick } = props;
-    return (
-      <div
-        className="absolute top-1/2 right-3 transform -translate-y-1/2"
-        onClick={onClick}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-5 h-5 text-gray-500 cursor-pointer hover:text-[#14B7A1]"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15.75 19.5 8.25 12l7.5-7.5"
-          />
-        </svg>
-      </div>
-    );
-  }
-
-  function SamplePrevArrow(props) {
-    const { onClick } = props;
-    return (
-      <div
-        className="absolute top-1/2 left-3 transform -translate-y-1/2"
-        onClick={onClick}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-          strokeWidth={1.5}
-          stroke="currentColor"
-          className="w-5 h-5 text-gray-500 cursor-pointer hover:text-[#14B7A1]"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="m8.25 4.5 7.5 7.5-7.5 7.5"
-          />
-        </svg>
-      </div>
-    );
-  }
-  const settings = {
-    dots: false,
-    autoplay: true,
-    autoplaySpeed: 5000,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    variableWidth: false,
-    adaptiveHeight: true,
-    centerMode: false,
-    nextArrow: <SamplePrevArrow />, // Ocultar seta de próximo
-    prevArrow: <SampleNextArrow />,
-
-    responsive: [
-      {
-        breakpoint: 1024,
-        settings: {
-          variableWidth: false,
-          adaptiveHeight: true,
-          centerMode: false,
-          slidesToShow: 2,
-          slidesToScroll: 1,
-        },
-      },
-      {
-        breakpoint: 794,
-        settings: {
-          variableWidth: false,
-          adaptiveHeight: true,
-          centerMode: false,
-          slidesToShow: 1,
-          slidesToScroll: 1,
-          nextArrow:null,
-          prevArrow:null
-        },
-      },
-      
-    ],
-  };
-
   return (
     <section className="container mx-auto h-full">
       {data && data.length > 0 && (
         <div className="w-full h-full mx-auto">
           <div className="w-full px-3">
-          <h1 className="text-xl font-bold py-4">Artigos Recomendados</h1>
+            <h1 className="text-xl font-bold py-4">Artigos Recomendados</h1>
           </div>
-          
 
-          <Carrousel settings={settings} className="mb-10 bg-red-600">
+          <Carrousel settings={settingsArticlesCarroousel} className="mb-10 ">
             {data?.map((magazine, index) => (
               <div
                 key={index}
@@ -133,8 +45,8 @@ const Recommended = async () => {
                       {magazine.name}
                     </h1>
                     <button className="w-[28%] h-6 rounded-md text-white bg-[#14b7a1]   text-[10px] ">
-                Recomendado
-              </button>
+                      Recomendado
+                    </button>
                   </div>
                   <div className="w-full mt-2 flex items-center gap-2 h-[164px] ">
                     <div className="w-[70%] h-full text-ellipsis overflow-hidden ">
@@ -154,17 +66,18 @@ const Recommended = async () => {
                       </p>
                     </div>
                     <div className="w-[30%] h-full flex items-center justify-center ">
-                    <img
-                        src={magazine.cover}
-                        alt={magazine.name}
-                        className="w-full h-full object-cover object-center "
-                      />
+                      <Image src={magazine?.cover} alt={magazine.name} 
+                      quality={100}
+                      width={150}
+                      height={150}
+                      style={{
+                        objectFit: 'cover', // cover, contain, none
+                        width:'100%',
+                        height:'100%'
+          }} />
                     </div>
-                    <div>
-                    
-                    </div>
+                    <div></div>
                   </div>
-                 
 
                   <div className="w-full h-full px-2">
                     <div className="w-full  flex items-center justify-between ">
